@@ -1,17 +1,21 @@
-const inputCheck = require('../utils/inputCheck');
+// utility to check if an object has the required properties
+// e.g., inputCheck(object, 'prop1', 'prop2', 'etc')
 
-test('inputCheck() returns null when all properties exist', () => {
-  const obj = {name: 'alice'};
+module.exports = function(obj, ...props) {
+  const errors = [];
 
-  expect(inputCheck(obj, 'name')).toBe(null);
-});
+  props.forEach((prop) => {
+    // if property is blank or doesn't exist, add to errors array
+    if (obj[prop] === undefined || obj[prop] === '') {
+      errors.push(`No ${prop} specified.`);
+    }
+  });
 
-test('inputCheck() returns an object when a property is missing', () => {
-  const obj = {name: 'alice', occupation: ''};
-
-  expect(inputCheck(obj, 'name', 'occupation')).toEqual(
-    expect.objectContaining({
-      error: expect.stringContaining('No occupation specified')
-    })
-  );
-});
+  if (errors.length) {
+    return {
+      error: errors.join(' ')
+    };
+  }
+  
+  return null;
+};
